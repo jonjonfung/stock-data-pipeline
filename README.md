@@ -4,7 +4,7 @@
 
 A fully automated serverless data pipeline that fetches daily stock prices from the 
 Alpha Vantage API and stores them in AWS S3 for analysis with Athena. The pipeline 
-runs automatically every day at 9am Sydney time via EventBridge, building a growing 
+runs automatically every day at 9am Sydney time via EventBridge, building a growing  
 historical dataset over time.
 
 ## 🏗️ Architecture
