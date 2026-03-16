@@ -8,6 +8,8 @@ runs automatically every day at 9am Sydney time via EventBridge, building a grow
 historical dataset over time.
 
 ## 🏗️ Architecture
+
+![Image](https://github.com/user-attachments/assets/00b25a99-c36d-4d72-a1d1-fc4db997a683)
 ```
 EventBridge (daily trigger 9am Sydney)
   → AWS Step Functions (orchestration)
