@@ -1,1 +1,70 @@
+{
+  "Comment": "Stock data pipeline - fetch and transform daily stock prices",
+  "StartAt": "FetchStockData",
+  "States": {
+    "FetchStockData": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "stock-fetch-data",
+        "Payload": {
+          "source": "step_functions"
+        }
+      },
+      "ResultPath": "$.fetchResult",
+      "Next": "TransformStockData",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "PipelineFailed",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "TransformStockData": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "stock-transform-data",
+        "Payload": {
+          "bucket": "stock-pipeline-john",
+          "date.$": "$.fetchResult.Payload.date"
+        }
+      },
+      "ResultPath": "$.transformResult",
+      "Next": "PipelineSucceeded",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "PipelineFailed",
+          "ResultPath": "$.error"
+        }
+      ],
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "PipelineSucceeded": {
+      "Type": "Succeed"
+    },
+    "PipelineFailed": {
+      "Type": "Fail",
+      "Error": "PipelineFailed",
+      "Cause": "Stock pipeline failed — check Lambda logs"
+    }
+  }
+}
 
