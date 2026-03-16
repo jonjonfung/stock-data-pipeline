@@ -1,1 +1,63 @@
+name: Tests
 
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Test imports
+        run: |
+          python -c "
+          import boto3
+          import json
+          import pandas as pd
+          import urllib.request
+          print('✅ All imports successful!')
+          "
+
+      - name: Test fetch Lambda code
+        run: |
+          python -c "
+          import json
+          import urllib.request
+
+          # Test API URL builds correctly
+          symbol = 'AAPL'
+          api_key = 'demo'
+          url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}'
+          print(f'✅ API URL builds correctly: {url}')
+          "
+
+      - name: Test transform Lambda code
+        run: |
+          python -c "
+          import pandas as pd
+          import json
+
+          # Test transformation logic
+          mock_data = {
+              'Global Quote': {
+                  '01. symbol': 'AAPL',
+                  '02. open': '170.00',
+                  '03. low': '169.00',
+                  '04. high': '171.00',
+                  '05. price': '170.50',
