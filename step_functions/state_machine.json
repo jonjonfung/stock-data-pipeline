@@ -63,8 +63,7 @@
     "PipelineFailed": {
       "Type": "Fail",
       "Error": "PipelineFailed",
-      "Cause": "Stock pipeline failed — check Lambda logs"
+      "Cause": "Stock pipeline failed - check Lambda logs"
     }
   }
 }
-
